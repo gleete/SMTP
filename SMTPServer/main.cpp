@@ -393,14 +393,14 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                      int num = strlen(mailFrom);
                      mailFrom[num - 1] = '\0';     //extract the ">" from the end
                  }
-                 cout << "WE ARE DOING MESSAGE!" << endl;
+                
                  finalMailFrom = mailFrom;      //used to store header information in a STRING
 
                   if(res == -1){
                       cout << "ERROR RECEIVING \"MAIL FROM\" FROM CLIENT\n";
                       return 0;
                  }
-                 cout << "WE ARE DOING MESSAGE!" << endl;
+
                  send (current_client, twoFifty, sizeof(twoFifty),0);   //Send 250 OK for successfull MAIL FROM:
                  cout << "S -> " << twoFifty << endl;
                  //FINISHED RECEIVING MAIL FROM
@@ -506,8 +506,9 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                 fin.open("usernames.txt");
 
 
-                while (getline(fin, temp))
+                while (true)
                 {
+                    getline(fin, temp);
                     if(finalRcpt == temp)
                     {
                         cout << "Found a match for a local user: " << temp <<  endl;
@@ -516,9 +517,7 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                         fout.open((finalRcpt + ".txt").c_str(), ios::out | ios::app);
                         if (fout.is_open())
                         {
-                            fout << "--------------------------------" << endl;
                             fout << theMessage << endl;
-                            fout << "--------------------------------" << endl;
                             fout.close();
                         }
                         else
@@ -527,7 +526,7 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                         }
                         break;
                     }
-                    if (fin.eof())
+                    else if (fin.eof())
                     {
                         
                         cout << "User is not on this server, forwarding..." << endl;
@@ -572,9 +571,9 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                         if (connect(client, (sockaddr *) &clientAddress, sizeof(clientAddress)) == SOCKET_ERROR)
                         {
                             cerr<<" 421: Service Not Available\n";
-                            system("pause");
+                            //system("pause");
                             WSACleanup();
-                            exit(13);
+                            //exit(13);
                         }
                         
                         char option[256];
@@ -635,7 +634,8 @@ DWORD WINAPI receive_cmds(LPVOID lpParam)
                         cout << response << endl;
                         memset(response, 0, 100);
                         
-                        getips.close();    
+                        getips.close();   
+                        break; 
                     }
                 }
             fin.close();
